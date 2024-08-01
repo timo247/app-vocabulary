@@ -9,10 +9,24 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Vocabulaire sérère</title>
     <style>
         html {
             font-family: "Inter", sans-serif;
+        }
+
+        @media (max-width: 600px) {
+
+            th,
+            td {
+                font-size: 14px;
+                padding: 4px;
+            }
+
+            .modal-content {
+                width: 90%;
+            }
         }
 
         table {
@@ -27,6 +41,15 @@
             padding: 8px;
             text-align: left;
             position: relative;
+        }
+
+        .third-col {
+            width: 8%
+        }
+
+        .third-header {
+            border: none;
+            background-color: white;
         }
 
         th {
@@ -119,7 +142,7 @@
             <tr>
                 <th>Français</th>
                 <th>Sérère</th>
-                <th class="hidden">Action</th>
+                <th class="third-header third-col"></th>
             </tr>
         </thead>
         <tbody>
@@ -140,7 +163,8 @@
                         </div>
                     </div>
                 </td>
-                <td class="no-border"><button class="delete-button" onclick="deleteRow(this)">Supprimer</button></td>
+                <td class="no-border third-col"><button class="delete-button" onclick="deleteRow(this)"><i
+                            class="fas fa-trash-alt"></i></button></td>
             </tr>
         </tbody>
     </table>
@@ -173,7 +197,8 @@
                 '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white"><span>Exemple 1</span></div></div>'
             cell2.innerHTML =
                 '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><span>Nouvelle Cellule 2</span></div>';
-            cell3.innerHTML = '<button class="delete-button" onclick="deleteRow(this)">Supprimer</button>';
+            cell3.innerHTML =
+                '<button class="delete-button" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>';
             cell3.classList.add("no-border");
         }
 
