@@ -176,7 +176,7 @@
     <script>
         let currentCell;
         const knowledgeColors = [
-            "white", "#6E69FF", "#ef476f", "#ffd166", "#FFFA75", "#AEFCB2"
+            "#6E69FF", "#ef476f", "#ffd166", "#FFFA75", "#AEFCB2", "white"
         ]
 
         const vocabularies = @json($vocabularies);
@@ -188,11 +188,11 @@
                 if (voc.is_sentence) {
                     tableType = "sentences"
                 }
-                addRow(tableType, voc.french, voc.serere)
+                addRow(tableType, voc.french, voc.serere, voc.correctly_translated, voc.correctly_understood)
             });
         }
 
-        function addRow(tableClass, frenchValue, serereValue) {
+        function addRow(tableClass, frenchValue, serereValue, correctlyTranslated, correctlyUnderstood) {
             const table = document.querySelector(`.${tableClass}`).getElementsByTagName('tbody')[0];
             if (frenchValue == null) {
                 frenchValue = "En Français"
@@ -208,12 +208,15 @@
             const cell3 = newRow.insertCell(2);
 
             cell1.innerHTML =
-                `<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=0><span>${frenchValue}</span></div></div>`
+                `<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=${correctlyTranslated}><span>${frenchValue}</span></div></div>`
             cell2.innerHTML =
-                `<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=0></button><span>${serereValue}</span></div></div>`;
+                `<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=${correctlyUnderstood}></button><span>${serereValue}</span></div></div>`;
             cell3.innerHTML =
                 '<button class="delete-button" onclick="deleteRow(this)">🗑️</button>';
             cell3.classList.add("no-border");
+
+            cell1.style.backgroundColor = knowledgeColors[correctlyTranslated]
+            cell2.style.backgroundColor = knowledgeColors[correctlyUnderstood]
         }
 
         function deleteRow(button) {
@@ -230,14 +233,12 @@
         }
 
         function changeCellColor(cell) {
-            console.log(cell)
             if (cell.dataset.color < 5) {
                 cell.dataset.color++;
             } else {
                 cell.dataset.color = 0;
             }
-            cell.parentNode.style.backgroundColor = `${knowledgeColors[cell.dataset.color]}`;
-            console.log(cell.parentNode)
+            cell.parentNode.parentNode.style.backgroundColor = `${knowledgeColors[cell.dataset.color]}`;
         }
 
         function closeModal() {
