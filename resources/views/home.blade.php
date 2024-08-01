@@ -182,7 +182,10 @@
     </div>
 
     <script>
-        var currentCell;
+        let currentCell;
+
+        const vocabularies = @json($vocabularies);
+        console.log('vocabularies', vocabularies);
 
         function addRow() {
             const table = document.querySelector(".dynamicTable").getElementsByTagName('tbody')[0];
