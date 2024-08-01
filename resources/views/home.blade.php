@@ -9,6 +9,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         th,
@@ -47,6 +48,10 @@
         .cell-content {
             display: flex;
             align-items: center;
+        }
+
+        .cell-clickable-area {
+            flex: 1;
         }
 
         .modal {
@@ -113,13 +118,17 @@
                 <td>
                     <div class="cell-content">
                         <button class="edit-button" onclick="editCell(this)">✏️</button>
-                        <span>Exemple 1</span>
+                        <div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white">
+                            <span>Exemple 1</span>
+                        </div>
                     </div>
                 </td>
                 <td>
                     <div class="cell-content">
                         <button class="edit-button" onclick="editCell(this)">✏️</button>
-                        <span>Exemple 2</span>
+                        <div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white">
+                            <span>Exemple 2</span>
+                        </div>
                     </div>
                 </td>
                 <td class="no-border"><button class="delete-button" onclick="deleteRow(this)">Supprimer</button></td>
@@ -130,7 +139,7 @@
     <button class="add-button" onclick="addRow()">Ajouter une ligne</button>
 
     <!-- Modale -->
-    <div id="myModal" class="modal">
+    <div id="editCellModale" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <p>Changer le texte:</p>
@@ -155,12 +164,12 @@
             const cell3 = newRow.insertCell(2);
 
             // Ajouter du contenu aux nouvelles cellules
+            //cell1.innerHTML ='<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><span>Nouvelle Cellule 1</span></div>';
             cell1.innerHTML =
-                '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><span>Nouvelle Cellule 1</span></div>';
+                '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white"><span>Exemple 1</span></div></div>'
             cell2.innerHTML =
                 '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><span>Nouvelle Cellule 2</span></div>';
             cell3.innerHTML = '<button class="delete-button" onclick="deleteRow(this)">Supprimer</button>';
-            console.log(cell3)
             cell3.classList.add("no-border");
         }
 
@@ -172,16 +181,34 @@
         }
 
         function editCell(button) {
-            // Obtenir la cellule actuelle
             currentCell = button.parentNode.querySelector('span');
-            // Prérémplir le champ de la modale avec la valeur actuelle
             document.getElementById('modalInput').value = currentCell.textContent;
-            // Afficher la modale
-            document.getElementById('myModal').style.display = "flex";
+            document.getElementById('editCellModale').style.display = "flex";
+            document.getElementById('modalInput').focus()
+        }
+
+        function changeCellColor(cell) {
+            console.log(cell)
+            let cellColor = cell.dataset.color;
+            if (cellColor == "white") {
+                cell.dataset.color = "#6E69FF";
+            } else if (cellColor == "#6E69FF") {
+                cell.dataset.color = "#ef476f";
+            } else if (cellColor == "#ef476f") {
+                cell.dataset.color = "#ffd166";
+            } else if (cellColor == "#ffd166") {
+                cell.dataset.color = "#FFFA75";
+            } else if (cellColor == "#FFFA75") {
+                cell.dataset.color = "#AEFCB2";
+            } else if (cellColor == "#AEFCB2") {
+                cell.dataset.color = "white";
+            }
+            cell.parentNode.style.backgroundColor = `${cell.dataset.color}`;
+            console.log(cell.parentNode)
         }
 
         function closeModal() {
-            document.getElementById('myModal').style.display = "none";
+            document.getElementById('editCellModale').style.display = "none";
         }
 
         function saveChanges() {
@@ -190,6 +217,17 @@
             // Fermer la modale
             closeModal();
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && document.getElementById('editCellModale').style.display === "flex") {
+                saveChanges();
+            }
+
+            if (event.key === 'Escape' && document.getElementById('editCellModale').style.display === "flex") {
+                closeModal();
+            }
+
+        });
     </script>
 
 </body>
