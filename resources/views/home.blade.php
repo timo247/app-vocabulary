@@ -147,6 +147,8 @@
         <tbody>
         </tbody>
     </table>
+    <button class="add-button" onclick="addRow('sentences')">Ajouter une ligne</button>
+
 
     <h2>Mots</h2>
     <table class="words">
@@ -161,7 +163,7 @@
         </tbody>
     </table>
 
-    <button class="add-button" onclick="addRow('sentences')">Ajouter une ligne</button>
+    <button class="add-button" onclick="addRow('words')">Ajouter une ligne</button>
 
     <!-- Modale -->
     <div id="editCellModale" class="modal">
@@ -216,7 +218,11 @@
             cell3.classList.add("no-border");
 
             cell1.style.backgroundColor = knowledgeColors[correctlyTranslated]
-            cell2.style.backgroundColor = knowledgeColors[correctlyUnderstood]
+            if (correctlyTranslated < 5) {
+                cell2.style.backgroundColor = knowledgeColors[5]
+                cell2.querySelector('.cell-clickable-area').dataset
+                    .color-- //allows to have a purple value on first click of the cell when the last translation number switched from 4 to 5
+            }
         }
 
         function deleteRow(button) {
@@ -235,6 +241,8 @@
         function changeCellColor(cell) {
             if (cell.dataset.color < 5) {
                 cell.dataset.color++;
+            } else if (cell.dataset.color > 5) {
+                cell.dataset.color = 5;
             } else {
                 cell.dataset.color = 0;
             }
