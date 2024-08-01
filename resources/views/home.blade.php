@@ -136,8 +136,7 @@
 <body>
 
     <h2>Phrases</h2>
-
-    <table class="dynamicTable">
+    <table class="sentences">
         <thead>
             <tr>
                 <th>Français</th>
@@ -146,30 +145,23 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <div class="cell-content">
-                        <button class="edit-button" onclick="editCell(this)">✏️</button>
-                        <div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white">
-                            <span>Exemple 1</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="cell-content">
-                        <button class="edit-button" onclick="editCell(this)">✏️</button>
-                        <div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white">
-                            <span>Exemple 2</span>
-                        </div>
-                    </div>
-                </td>
-                <td class="no-border third-col"><button class="delete-button" onclick="deleteRow(this)"><i
-                            class="fas fa-trash-alt"></i></button></td>
-            </tr>
         </tbody>
     </table>
 
-    <button class="add-button" onclick="addRow()">Ajouter une ligne</button>
+    <h2>Mots</h2>
+    <table class="words">
+        <thead>
+            <tr>
+                <th>Français</th>
+                <th>Sérère</th>
+                <th class="third-header third-col"></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <button class="add-button" onclick="addRow('sentences')">Ajouter une ligne</button>
 
     <!-- Modale -->
     <div id="editCellModale" class="modal">
@@ -183,12 +175,31 @@
 
     <script>
         let currentCell;
+        const knowledgeColors = [
+            "white", "#6E69FF", "#ef476f", "#ffd166", "#FFFA75", "#AEFCB2"
+        ]
 
         const vocabularies = @json($vocabularies);
         console.log('vocabularies', vocabularies);
 
-        function addRow() {
-            const table = document.querySelector(".dynamicTable").getElementsByTagName('tbody')[0];
+        function seedTables() {
+            vocabularies.forEach(voc => {
+                let tableType = "words"
+                if (voc.is_sentence) {
+                    tableType = "sentences"
+                }
+                addRow(tableType, voc.french, voc.serere)
+            });
+        }
+
+        function addRow(tableClass, frenchValue, serereValue) {
+            const table = document.querySelector(`.${tableClass}`).getElementsByTagName('tbody')[0];
+            if (frenchValue == null) {
+                frenchValue = "En Français"
+            }
+            if (serereValue == null) {
+                serereValue = "En Sérère"
+            }
 
             const newRow = table.insertRow();
 
@@ -197,11 +208,11 @@
             const cell3 = newRow.insertCell(2);
 
             cell1.innerHTML =
-                '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white"><span>Exemple 1</span></div></div>'
+                `<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=0><span>${frenchValue}</span></div></div>`
             cell2.innerHTML =
-                '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><span>Nouvelle Cellule 2</span></div>';
+                `<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=0></button><span>${serereValue}</span></div></div>`;
             cell3.innerHTML =
-                '<button class="delete-button" onclick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>';
+                '<button class="delete-button" onclick="deleteRow(this)">🗑️</button>';
             cell3.classList.add("no-border");
         }
 
@@ -220,21 +231,12 @@
 
         function changeCellColor(cell) {
             console.log(cell)
-            let cellColor = cell.dataset.color;
-            if (cellColor == "white") {
-                cell.dataset.color = "#6E69FF";
-            } else if (cellColor == "#6E69FF") {
-                cell.dataset.color = "#ef476f";
-            } else if (cellColor == "#ef476f") {
-                cell.dataset.color = "#ffd166";
-            } else if (cellColor == "#ffd166") {
-                cell.dataset.color = "#FFFA75";
-            } else if (cellColor == "#FFFA75") {
-                cell.dataset.color = "#AEFCB2";
-            } else if (cellColor == "#AEFCB2") {
-                cell.dataset.color = "white";
+            if (cell.dataset.color < 5) {
+                cell.dataset.color++;
+            } else {
+                cell.dataset.color = 0;
             }
-            cell.parentNode.style.backgroundColor = `${cell.dataset.color}`;
+            cell.parentNode.style.backgroundColor = `${knowledgeColors[cell.dataset.color]}`;
             console.log(cell.parentNode)
         }
 
@@ -255,6 +257,10 @@
             if (event.key === 'Escape' && document.getElementById('editCellModale').style.display === "flex") {
                 closeModal();
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            seedTables();
         });
     </script>
 

@@ -14,7 +14,7 @@ class Vocabulary extends Model
         'is_sentence',
         'french',
         'serere',
-        'translation_knowledge',
-        'understanding_knowledge',
+        'correctly_translated',
+        'correctly_understoord',
     ];
 }
