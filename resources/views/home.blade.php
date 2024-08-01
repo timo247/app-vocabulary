@@ -4,8 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
     <title>Vocabulaire sérère</title>
     <style>
+        html {
+            font-family: "Inter", sans-serif;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -152,19 +161,14 @@
         var currentCell;
 
         function addRow() {
-            // Obtenir le tableau par son ID
             const table = document.querySelector(".dynamicTable").getElementsByTagName('tbody')[0];
 
-            // Créer une nouvelle ligne
             const newRow = table.insertRow();
 
-            // Insérer deux nouvelles cellules dans la nouvelle ligne
             const cell1 = newRow.insertCell(0);
             const cell2 = newRow.insertCell(1);
             const cell3 = newRow.insertCell(2);
 
-            // Ajouter du contenu aux nouvelles cellules
-            //cell1.innerHTML ='<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><span>Nouvelle Cellule 1</span></div>';
             cell1.innerHTML =
                 '<div class="cell-content"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color="white"><span>Exemple 1</span></div></div>'
             cell2.innerHTML =
@@ -174,9 +178,7 @@
         }
 
         function deleteRow(button) {
-            // Obtenir la ligne à supprimer
             const row = button.parentNode.parentNode;
-            // Supprimer la ligne
             row.parentNode.removeChild(row);
         }
 
@@ -185,6 +187,7 @@
             document.getElementById('modalInput').value = currentCell.textContent;
             document.getElementById('editCellModale').style.display = "flex";
             document.getElementById('modalInput').focus()
+            document.getElementById('modalInput').select()
         }
 
         function changeCellColor(cell) {
@@ -212,9 +215,7 @@
         }
 
         function saveChanges() {
-            // Mettre à jour le contenu de la cellule avec la nouvelle valeur
             currentCell.textContent = document.getElementById('modalInput').value;
-            // Fermer la modale
             closeModal();
         }
 
@@ -226,7 +227,6 @@
             if (event.key === 'Escape' && document.getElementById('editCellModale').style.display === "flex") {
                 closeModal();
             }
-
         });
     </script>
 
