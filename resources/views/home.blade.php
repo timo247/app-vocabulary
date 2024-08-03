@@ -165,7 +165,7 @@
 
     <button class="add-button" onclick="addRow('words')">Ajouter une ligne</button>
 
-    <!-- Modale -->
+    <!-- Field edit modale -->
     <div id="editCellModale" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -179,12 +179,24 @@
         </div>
     </div>
 
+    <!-- Delete confirmation Modale -->
+    <div id="deleteConfirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <p>Êtes-vous sûr de vouloir supprimer cette ligne ?</p>
+            <button onclick="confirmDelete()">Oui</button>
+            <button onclick="closeDeleteModal()">Non</button>
+        </div>
+    </div>
+
+
     <script>
         const apiUrl = 'http://127.0.0.1:8000/api'
         const knowledgeColors = [
             "#6E69FF", "#ef476f", "#ffd166", "#FFFA75", "#AEFCB2", "white"
         ]
         let currentCellSpan;
+        rowToDelete = null;
 
         const vocabularies = @json($vocabularies);
         console.log('vocabularies', vocabularies);
@@ -220,7 +232,7 @@
             cell2.innerHTML =
                 `<div class="cell-content" data-id=${id} data-language="serere"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=${correctlyUnderstood}></button><span>${serereValue}</span></div></div>`;
             cell3.innerHTML =
-                '<button class="delete-button" onclick="deleteRow(this)" data-id=${id}>🗑️</button>';
+                `<button class="delete-button" onclick="deleteRow(this)" data-id=${id}>🗑️</button>`;
             cell3.classList.add("no-border");
 
             cell1.style.backgroundColor = knowledgeColors[correctlyTranslated]
@@ -234,8 +246,44 @@
         }
 
         function deleteRow(button) {
-            const row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
+            rowToDelete = button.parentNode.parentNode;
+            document.getElementById('deleteConfirmationModal').style.display = "flex";
+        }
+
+        function closeDeleteModal() {
+            rowToDelete = null;
+            document.getElementById('deleteConfirmationModal').style.display = "none";
+        }
+
+        function confirmDelete() {
+            if (!rowToDelete) return;
+            const id = rowToDelete.querySelector('.delete-button').dataset.id;
+            console.log(rowToDelete)
+            fetch(`${apiUrl}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // if Laravel CSRF protection
+                    },
+                    body: JSON.stringify({
+                        id: id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        rowToDelete.parentNode.removeChild(rowToDelete);
+                    } else {
+                        console.log("data", data)
+                        alert('Erreur lors de la suppression. Veuillez réessayer.');
+                    }
+                    closeDeleteModal();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Erreur lors de la suppression. Veuillez réessayer.');
+                    closeDeleteModal();
+                });
         }
 
         function editCell(button) {

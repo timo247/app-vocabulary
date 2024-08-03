@@ -55,6 +55,21 @@ class VocabularyController extends Controller
         return response()->json(['success' => false, 'message' => 'No element found'], 404);
     }
 
+    /**
+     * Supprime une phrase spécifique de la base de données.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request)
+    {
+        $voc = Vocabulary::find($request->id); // Trouve la phrase par ID ou renvoie une erreur 404
+        if ($voc) {
+            $voc->delete();
+            return response()->json(['success' => true, 'message' => 'Deletion successful']);
+        }
+        return response()->json(['success' => false, 'message' => 'No element found'], 404);
+    }
 
     // /**
     //  * Affiche le formulaire de création d'une nouvelle phrase.
@@ -85,61 +100,5 @@ class VocabularyController extends Controller
     //     return redirect()->route('vocabulary.index'); // Redirige vers la liste des phrases
     // }
 
-    // /**
-    //  * Affiche les détails d'une phrase spécifique.
-    //  *
-    //  * @param int $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show($id)
-    // {
-    //     $Vocabular = Vocabular::findOrFail($id); // Trouve la phrase par ID ou renvoie une erreur 404
-    //     return view('vocabulary.show', compact('Vocabular')); // Retourne une vue avec les détails de la phrase
-    // }
 
-    // /**
-    //  * Affiche le formulaire d'édition pour une phrase spécifique.
-    //  *
-    //  * @param int $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function edit($id)
-    // {
-    //     $Vocabular = Vocabular::findOrFail($id); // Trouve la phrase par ID ou renvoie une erreur 404
-    //     return view('vocabulary.edit', compact('Vocabular')); // Retourne une vue avec le formulaire d'édition
-    // }
-
-    // /**
-    //  * Met à jour une phrase spécifique dans la base de données.
-    //  *
-    //  * @param \Illuminate\Http\Request $request
-    //  * @param int $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function update(Request $request, $id)
-    // {
-    //     $validated = $request->validate([
-    //         'french' => 'required|string|max:255',
-    //         'serere' => 'required|string|max:255',
-    //         'translation_knowledge' => 'required|integer',
-    //         'understanding_knowledge' => 'required|integer',
-    //     ]);
-
-    //     $Vocabular = Vocabular::findOrFail($id); // Trouve la phrase par ID ou renvoie une erreur 404
-    //     $Vocabular->update($validated); // Met à jour la phrase avec les données validées
-    //     return redirect()->route('vocabulary.index'); // Redirige vers la liste des phrases
-    // }
-
-    // /**
-    //  * Supprime une phrase spécifique de la base de données.
-    //  *
-    //  * @param int $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function destroy($id)
-    // {
-    //     $Vocabular = Vocabular::findOrFail($id); // Trouve la phrase par ID ou renvoie une erreur 404
-    //     $Vocabular->delete(); // Supprime la phrase
-    //     return redirect()->route('vocabulary.index'); // Redirige vers la liste des phrases
-    // }
 }
