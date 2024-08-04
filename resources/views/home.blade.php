@@ -80,6 +80,7 @@
         .cell-content {
             display: flex;
             align-items: center;
+            cursor: pointer;
         }
 
         .cell-clickable-area {
@@ -135,6 +136,7 @@
 </head>
 
 <body>
+    <h1>Vocabulaire sérère</h1>
 
     <h2>Phrases</h2>
     <table class="sentences">
@@ -173,7 +175,7 @@
     <!-- Field edit modale -->
     <div id="editCellModale" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="closeEditModal()">&times;</span>
             <p>Changer le texte:</p>
             <input type="text" id="modalInput">
             <input type="hidden" id="modalCellId">
@@ -193,9 +195,6 @@
             <button class='modal-button cancel' onclick="closeDeleteModal()">Non</button>
         </div>
     </div>
-
-    </div>
-
 
     <script>
         const apiUrl = 'http://127.0.0.1:8000/api'
@@ -271,18 +270,17 @@
 
         function addRow(tableClass, frenchValue, serereValue, correctlyTranslated, correctlyUnderstood, id) {
             const table = document.querySelector(`.${tableClass}`).getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+
             if (frenchValue == null) {
                 frenchValue = "En Français"
             }
             if (serereValue == null) {
                 serereValue = "En Sérère"
             }
-
-            const newRow = table.insertRow();
-
-            const cell1 = newRow.insertCell(0);
-            const cell2 = newRow.insertCell(1);
-            const cell3 = newRow.insertCell(2);
 
             cell1.innerHTML =
                 `<div class="cell-content" data-id=${id} data-language="french"><button class="edit-button" onclick="editCell(this)">✏️</button><div class="cell-clickable-area" onclick="changeCellColor(this)" data-color=${correctlyTranslated}><span>${frenchValue}</span></div></div>`
@@ -352,7 +350,6 @@
             const cellClickableArea = currentCell.querySelector('.cell-clickable-area')
             const knowledgeLevel = cellClickableArea.getAttribute('data-color');
             const cellLanguage = currentCell.getAttribute('data-language');
-
 
             document.getElementById('modalInput').value = currentCellSpan.textContent;
             document.getElementById('modalCellId').value = vocId;
@@ -424,7 +421,7 @@
             }
         }
 
-        function closeModal() {
+        function closeEditModal() {
             document.getElementById('editCellModale').style.display = "none";
         }
 
@@ -450,7 +447,7 @@
                     .then(data => {
                         if (data.success) {
                             currentCellSpan.textContent = document.getElementById('modalInput').value;
-                            closeModal();
+                            closeEditModal();
                         } else {
                             document.getElementById('modalError').style.display = 'block';
                         }
@@ -475,7 +472,7 @@
                     .then(data => {
                         if (data.success) {
                             currentCellSpan.textContent = document.getElementById('modalInput').value;
-                            closeModal();
+                            closeEditModal();
                         } else {
                             document.getElementById('modalError').style.display = 'block';
                         }
@@ -491,12 +488,10 @@
             if (event.key === 'Enter' && document.getElementById('editCellModale').style.display === "flex") {
                 saveChanges();
             }
-
             if (event.key === 'Escape' && document.getElementById('editCellModale').style.display === "flex") {
-                closeModal();
+                closeEditModal();
             }
         });
-
         document.addEventListener('DOMContentLoaded', function() {
             seedTables();
         });
