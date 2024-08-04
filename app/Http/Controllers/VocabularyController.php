@@ -71,34 +71,24 @@ class VocabularyController extends Controller
         return response()->json(['success' => false, 'message' => 'No element found'], 404);
     }
 
-    // /**
-    //  * Affiche le formulaire de création d'une nouvelle phrase.
-    //  *
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function create()
-    // {
-    //     return view('vocabulary.create'); // Retourne une vue avec le formulaire de création
-    // }
 
-    // /**
-    //  * Enregistre une nouvelle phrase dans la base de données.
-    //  *
-    //  * @param \Illuminate\Http\Request $request
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function store(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'french' => 'required|string|max:255',
-    //         'serere' => 'required|string|max:255',
-    //         'translation_knowledge' => 'required|integer',
-    //         'understanding_knowledge' => 'required|integer',
-    //     ]);
+    /**
+     * Enregistre une nouvelle phrase dans la base de données.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'is_sentence' => 'nullable|boolean',
+            'french' => 'required|string',
+            'serere' => 'required|string',
+            'correctly_translated' => 'nullable|boolean',
+            'correctly_understood' => 'nullable|boolean',
+        ]);
 
-    //     Vocabular::create($validated); // Crée une nouvelle entrée dans la base de données
-    //     return redirect()->route('vocabulary.index'); // Redirige vers la liste des phrases
-    // }
-
-
+        $vocabulary = Vocabulary::create($validatedData);
+        return response()->json(['success' => true, 'id' => $vocabulary->id, 'message' => 'Deletion successful']);
+    }
 }

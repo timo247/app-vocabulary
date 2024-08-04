@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/update', [VocabularyController::class, 'update']);
+Route::post('/create', [VocabularyController::class, 'store']);
 Route::delete('/delete', [VocabularyController::class, 'destroy']);

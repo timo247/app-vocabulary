@@ -102,6 +102,7 @@
         }
 
         .modal-content {
+            border-radius: 5px;
             background-color: #fefefe;
             margin: auto;
             padding: 20px;
@@ -147,7 +148,9 @@
         <tbody>
         </tbody>
     </table>
-    <button class="add-button" onclick="addRow('sentences')">Ajouter une ligne</button>
+    <button class="add-button"
+        onclick="createVocabulary('sentences','Phrase en Français', 'Phrase en sérère', 0, 0)">Ajouter
+        une phrase</button>
 
 
     <h2>Mots</h2>
@@ -163,7 +166,9 @@
         </tbody>
     </table>
 
-    <button class="add-button" onclick="addRow('words')">Ajouter une ligne</button>
+    <button class="add-button" onclick="createVocabulary('words','Mot en Français', 'Mot en sérère', 0, 0)">Ajouter
+        un
+        mot</button>
 
     <!-- Field edit modale -->
     <div id="editCellModale" class="modal">
@@ -184,9 +189,11 @@
         <div class="modal-content">
             <span class="close" onclick="closeDeleteModal()">&times;</span>
             <p>Êtes-vous sûr de vouloir supprimer cette ligne ?</p>
-            <button onclick="confirmDelete()">Oui</button>
-            <button onclick="closeDeleteModal()">Non</button>
+            <button class='modal-button confirm' onclick="confirmDelete()">Oui</button>
+            <button class='modal-button cancel' onclick="closeDeleteModal()">Non</button>
         </div>
+    </div>
+
     </div>
 
 
@@ -197,9 +204,8 @@
         ]
         let currentCellSpan;
         rowToDelete = null;
-
         const vocabularies = @json($vocabularies);
-        console.log('vocabularies', vocabularies);
+        console.log(vocabularies)
 
         function seedTables() {
             vocabularies.forEach(voc => {
@@ -210,6 +216,57 @@
                 addRow(tableType, voc.french, voc.serere, voc.correctly_translated, voc.correctly_understood, voc
                     .id)
             });
+        }
+
+        function createVocabulary(tableClass, frenchValue, serereValue, correctlyTranslated, correctlyUnderstood,
+            callAddRow) {
+            let isSentence = false;
+            if (tableClass == "sentences") {
+                isSentence = true;
+            }
+            return fetch(`${apiUrl}/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // if Laravel CSRF protection
+                    },
+                    body: JSON.stringify({
+                        is_sentence: isSentence,
+                        french: frenchValue,
+                        serere: serereValue,
+                        correctly_translated: correctlyTranslated,
+                        correctly_understood: correctlyUnderstood
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let row;
+                        if (isSentence) {
+                            row = addRow('sentences', 'Phrase en Français', 'Phrase en sérère', 0, 0, data.id)
+                        } else {
+                            row = addRow('words', 'Mot en Français', 'Phrase en sérère', 0, 0, data.id)
+                        }
+
+                        // Scroll to the new row
+                        if (row) {
+                            const cell = row.querySelector(`[data-id='${data.id}']`);
+                            if (cell) {
+                                cell.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
+                            }
+                        }
+
+                    } else {
+                        throw new Error('Erreur lors de l\'envoi');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    throw error;
+                });
         }
 
         function addRow(tableClass, frenchValue, serereValue, correctlyTranslated, correctlyUnderstood, id) {
@@ -243,6 +300,7 @@
             } else {
                 cell2.style.backgroundColor = knowledgeColors[correctlyUnderstood]
             }
+            return newRow;
         }
 
         function deleteRow(button) {
@@ -301,6 +359,7 @@
             document.getElementById('modalKnowledgeLevel').value = knowledgeLevel;
             document.getElementById('modalLanguage').value = cellLanguage;
             document.getElementById('editCellModale').style.display = "flex";
+            document.getElementById('modalError').style.display = 'none';
             document.getElementById('modalInput').focus()
             document.getElementById('modalInput').select()
         }
