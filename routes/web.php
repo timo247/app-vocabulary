@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VocabularyController;
 
@@ -19,4 +20,12 @@ use App\Http\Controllers\VocabularyController;
 });
 */
 
-Route::get('/', [VocabularyController::class, 'index'])->name('home');
+Auth::routes();
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Auth::routes();
+
+Route::get('/home', [VocabularyController::class, 'index'])->name('home')->middleware('auth');

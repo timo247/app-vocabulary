@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 
 class VocabularyController extends Controller
 {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Affiche la liste des phrases.
      *

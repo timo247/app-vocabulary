@@ -137,6 +137,11 @@
 
 <body>
     <h1>Vocabulaire sérère</h1>
+    <!-- Bouton de déconnexion -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnexion</button>
 
     <h2>Phrases</h2>
     <table class="sentences">
